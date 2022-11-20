@@ -26,7 +26,27 @@ function main(params) {
       authenticator: authenticator
     });
     cloudant.setServiceUrl(secret.COUCH_URL);
-    if (params.state) {
+    if (params.dealerId) {
+      cloudant
+        .postFind({
+          db: database,
+          selector: {
+            id: {
+              $eq: params.dealerId
+            }
+          }
+        })
+        .then((response) => {
+          if (((response || {}).result || []).length === 0) {
+            resolveHandler(resolve, 404, []);
+          } else {
+            resolveHandler(resolve, 200, (response || {}).result);
+          }
+        })
+        .catch((error) => {
+          resolveHandler(resolve, 500, error);
+        });
+    } else if (params.state) {
       cloudant
         .postFind({
           db: database,

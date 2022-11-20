@@ -5,6 +5,14 @@
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 const { IamAuthenticator } = require('ibm-cloud-sdk-core');
 
+function resolveHandler(resolve, statusCode, body) {
+  resolve({
+    statusCode: statusCode,
+    headers: { 'Content-Type': 'application/json' },
+    body: body
+  });
+}
+
 function main(params) {
   const secret = {
     COUCH_URL:
@@ -19,19 +27,44 @@ function main(params) {
       authenticator: authenticator
     });
     cloudant.setServiceUrl(secret.COUCH_URL);
-    cloudant
-      .postAllDocs({
-        db: 'dealerships',
-        includeDocs: true
-      })
-      .then((response) => {
-        resolve({
-          statusCode: 200,
-          headers: { 'Content-Type': 'application/json' },
-          body: (response || {}).result
+    if (params.state) {
+      cloudant
+        .postFind({
+          db: 'dealerships',
+          selector: {
+            state: {
+              $eq: params.state
+            }
+          }
+        })
+        .then((response) => {
+          if (((response || {}).result || []).length === 0) {
+            resolveHandler(resolve, 404, []);
+          } else {
+            resolveHandler(resolve, 200, (response || {}).result);
+          }
+        })
+        .catch((error) => {
+          resolveHandler(resolve, 500, error);
         });
-      });
+    } else {
+      cloudant
+        .postAllDocs({
+          db: 'dealerships',
+          includeDocs: true
+        })
+        .then((response) => {
+          if (((response || {}).result || []).length === 0) {
+            resolveHandler(resolve, 404, []);
+          } else {
+            resolveHandler(resolve, 200, (response || {}).result);
+          }
+        })
+        .catch((error) => {
+          resolveHandler(resolve, 500, error);
+        });
+    }
   });
 }
 
-main();
+main({ state: 'Texas' });

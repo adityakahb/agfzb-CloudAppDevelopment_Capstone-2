@@ -17,18 +17,18 @@ def main(dict):
     try:
         selector = {"dealership": {"$eq": int(dict["dealerId"])}}
         response = service.post_find(
-            db='reviews',
+            db="reviews",
             selector=selector
         ).get_result()
         result = {
-            'headers': {'Content-Type': 'application/json'},
-            'body': {'data': response}
+            "headers": {"Content-Type": "application/json"},
+            "body": {"data": response}
         }
         return result
     except:
         return {
-            'statusCode': 500,
-            'message': "Something went wrong"
+            "statusCode": 500,
+            "message": "Something went wrong"
         }
 
 

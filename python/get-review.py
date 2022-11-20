@@ -22,7 +22,7 @@ def main(dict):
         ).get_result()
         result = {
             "headers": {"Content-Type": "application/json"},
-            "body": {"data": response}
+            "body": response
         }
         return result
     except:

@@ -18,10 +18,16 @@ def main():
     #     url=secret["URL"],
     #     connect=True,
     # )
-    authenticator = IAMAuthenticator(secret["IAM_API_KEY"])
-    client = CloudantV1(authenticator=authenticator)
+    authenticator = IAMAuthenticator(
+        secret["IAM_API_KEY"])
+    service = CloudantV1(authenticator=authenticator)
+    service.set_service_url(secret["COUCH_URL"])
 
-    print('===client', client)
+    response = service.post_all_docs(
+        db='reviews',
+        include_docs=True
+    ).get_result()
+    print(response)
 
 
 main()

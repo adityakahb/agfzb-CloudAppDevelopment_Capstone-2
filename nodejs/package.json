@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node sample.js",
+    "start": "node get_dealerships.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint . --ext .js --ignore-pattern node_modules/"
   },
@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@cloudant/cloudant": "^4.5.1"
+    "@ibm-cloud/cloudant": "^0.3.0",
+    "ibm-cloud-sdk-core": "^3.2.1"
   },
   "devDependencies": {
     "eslint": "^8.28.0"

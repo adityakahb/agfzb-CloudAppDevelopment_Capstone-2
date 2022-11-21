@@ -1,5 +1,6 @@
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibmcloudant.cloudant_v1 import CloudantV1, Document
+from ibm_cloud_sdk_core import ApiException
 
 
 def formResponse(statusCode, body):
@@ -24,7 +25,7 @@ def main(dict):
 
     try:
         posted_review = Document(
-            id=dict["review"]["id"],
+            review_id=dict["review"]["review_id"],
             name=dict["review"]["name"],
             dealership=dict["review"]["dealership"],
             review=dict["review"]["review"],
@@ -35,17 +36,22 @@ def main(dict):
             car_year=dict["review"]["car_year"]
         )
         uuid = service.get_uuids(count=1).get_result()
-        thisUuid = str(uuid["uuids"][0])
+        thisUuid = uuid["uuids"][0]
         response = service.put_document(
             db="reviews",
             doc_id=thisUuid,
             document=posted_review).get_result()
-        print("Success", response)
         return formResponse(200, response)
+    except ApiException as ae:
+        print("Something went wrong on the server")
+        print(" - status code: " + str(ae.code))
+        print(" - error message: " + ae.message)
+        if ("reason" in ae.http_response.json()):
+            print(" - reason:: " + ae.http_response.json()["reason"])
     except Exception as inst:
-        print("Error", inst)
+        print(inst)
         return formResponse(500, {"error": "Something went wrong on the server"})
 
 
-main({"review": {"id": 1114, "name": "Upkar Lidder", "dealership": 15, "review": "Great service!", "purchase": False,
+main({"review": {"review_id": 1115, "name": "Upkar Lidder", "dealership": 15, "review": "Great service!", "purchase": False,
                  "another": "field", "purchase_date": "02/16/2021", "car_make": "Audi", "car_model": "Car", "car_year": 2021}})

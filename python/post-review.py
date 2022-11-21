@@ -35,9 +35,10 @@ def main(dict):
             car_year=dict["review"]["car_year"]
         )
         uuid = service.get_uuids(count=1).get_result()
+        thisUuid = str(uuid["uuids"][0])
         response = service.put_document(
             db="reviews",
-            doc_id=uuid["uuids"][0],
+            doc_id=thisUuid,
             document=posted_review).get_result()
         print("Success", response)
         return formResponse(200, response)

@@ -33,7 +33,7 @@ def main(dict):
         else:
             return formResponse(200, response)
     except:
-        return formResponse(500, {"error": "Something went wrong"})
+        return formResponse(500, {"error": "Something went wrong on the server"})
 
 
 main({"dealerId": 15})

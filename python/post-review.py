@@ -1,0 +1,50 @@
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibmcloudant.cloudant_v1 import CloudantV1, Document
+
+
+def formResponse(statusCode, body):
+    return {
+        "statusCode": statusCode,
+        "headers": {"Content-Type": "application/json"},
+        "body": body
+    }
+
+
+def main(dict):
+    secret = {
+        "COUCH_URL":
+        "https://apikey-v2-2cyywmxlsaahl54fgbjm13d9xih7m61lg3ce16n5m9zd:2ebb1cd25e6d93cb8547ffe3f45fd6d4@21e59688-0d81-4ced-aee6-ffaddc42b6e7-bluemix.cloudantnosqldb.appdomain.cloud",
+        "COUCH_USERNAME": "apikey-v2-2cyywmxlsaahl54fgbjm13d9xih7m61lg3ce16n5m9zd",
+        "IAM_API_KEY": "422oU7w-BuGlBjsnxjwFyGYVIuXebrPhdjWIWVfyAwBw"
+    }
+    authenticator = IAMAuthenticator(
+        secret["IAM_API_KEY"])
+    service = CloudantV1(authenticator=authenticator)
+    service.set_service_url(secret["COUCH_URL"])
+
+    try:
+        posted_review = Document(
+            id=dict["review"]["id"],
+            name=dict["review"]["name"],
+            dealership=dict["review"]["dealership"],
+            review=dict["review"]["review"],
+            purchase=dict["review"]["purchase"],
+            purchase_date=dict["review"]["purchase_date"],
+            car_make=dict["review"]["car_make"],
+            car_model=dict["review"]["car_model"],
+            car_year=dict["review"]["car_year"]
+        )
+        uuid = service.get_uuids(count=1).get_result()
+        response = service.put_document(
+            db="reviews",
+            doc_id=uuid["uuids"][0],
+            document=posted_review).get_result()
+        print("Success", response)
+        return formResponse(200, response)
+    except Exception as inst:
+        print("Error", inst)
+        return formResponse(500, {"error": "Something went wrong on the server"})
+
+
+main({"review": {"id": 1114, "name": "Upkar Lidder", "dealership": 15, "review": "Great service!", "purchase": False,
+                 "another": "field", "purchase_date": "02/16/2021", "car_make": "Audi", "car_model": "Car", "car_year": 2021}})

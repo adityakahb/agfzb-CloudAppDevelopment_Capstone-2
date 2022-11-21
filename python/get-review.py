@@ -2,6 +2,14 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibmcloudant.cloudant_v1 import CloudantV1
 
 
+def formResponse(statusCode, body):
+    return {
+        "statusCode": statusCode,
+        "headers": {"Content-Type": "application/json"},
+        "body": body
+    }
+
+
 def main(dict):
     secret = {
         "COUCH_URL":
@@ -20,16 +28,12 @@ def main(dict):
             db="reviews",
             selector=selector
         ).get_result()
-        result = {
-            "headers": {"Content-Type": "application/json"},
-            "body": response
-        }
-        return result
+        if (len(response["docs"]) == 0):
+            return formResponse(404, response)
+        else:
+            return formResponse(200, response)
     except:
-        return {
-            "statusCode": 500,
-            "message": "Something went wrong"
-        }
+        return formResponse(500, {"error": "Something went wrong"})
 
 
 main({"dealerId": 15})

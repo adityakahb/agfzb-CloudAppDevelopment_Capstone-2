@@ -47,8 +47,7 @@ def main(dict):
         if ("reason" in ae.http_response.json()):
             errorBody["reason"] = ae.http_response.json()["reason"]
         return formResponse(int(ae.code), errorBody)
-    except Exception as inst:
-        print(inst)
+    except:
         return formResponse(500, {"error": "Something went wrong on the server"})
 
 

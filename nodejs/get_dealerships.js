@@ -31,7 +31,7 @@ function main(params) {
         .postFind({
           db: database,
           selector: {
-            id: {
+            dealer_id: {
               $eq: params.dealerId
             }
           }

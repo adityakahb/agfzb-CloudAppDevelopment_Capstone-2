@@ -79,7 +79,7 @@ function main(params) {
           if (docs.length === 0) {
             resolveHandler(resolve, 404, []);
           } else {
-            resolveHandler(resolve, 200, (response || {}).result);
+            resolveHandler(resolve, 200, rows);
           }
         })
         .catch((error) => {

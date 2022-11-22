@@ -43,11 +43,10 @@ def main(dict):
             document=posted_review).get_result()
         return formResponse(200, response)
     except ApiException as ae:
-        print("Something went wrong on the server")
-        print(" - status code: " + str(ae.code))
-        print(" - error message: " + ae.message)
+        errorBody = {"error": ae.message}
         if ("reason" in ae.http_response.json()):
-            print(" - reason:: " + ae.http_response.json()["reason"])
+            errorBody["reason"] = ae.http_response.json()["reason"]
+        return formResponse(int(ae.code), errorBody)
     except Exception as inst:
         print(inst)
         return formResponse(500, {"error": "Something went wrong on the server"})

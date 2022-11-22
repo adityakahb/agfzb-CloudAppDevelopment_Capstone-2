@@ -26,27 +26,28 @@ function main(params) {
       authenticator: authenticator
     });
     cloudant.setServiceUrl(secret.COUCH_URL);
-    if (params.dealerId) {
+    if ((params || {}).dealerId) {
       cloudant
         .postFind({
           db: database,
           selector: {
             dealer_id: {
-              $eq: params.dealerId
+              $eq: parseInt(params.dealerId)
             }
           }
         })
         .then((response) => {
-          if (((response || {}).result || []).length === 0) {
+          const docs = ((response || {}).result || {}).docs || [];
+          if (docs.length === 0) {
             resolveHandler(resolve, 404, []);
           } else {
-            resolveHandler(resolve, 200, (response || {}).result);
+            resolveHandler(resolve, 200, docs);
           }
         })
         .catch((error) => {
           resolveHandler(resolve, 500, error);
         });
-    } else if (params.state) {
+    } else if ((params || {}).state) {
       cloudant
         .postFind({
           db: database,
@@ -57,7 +58,8 @@ function main(params) {
           }
         })
         .then((response) => {
-          if (((response || {}).result || []).length === 0) {
+          const docs = ((response || {}).result || {}).docs || [];
+          if (docs.length === 0) {
             resolveHandler(resolve, 404, []);
           } else {
             resolveHandler(resolve, 200, (response || {}).result);
@@ -73,7 +75,8 @@ function main(params) {
           includeDocs: true
         })
         .then((response) => {
-          if (((response || {}).result || []).length === 0) {
+          const docs = ((response || {}).result || {}).rows || [];
+          if (docs.length === 0) {
             resolveHandler(resolve, 404, []);
           } else {
             resolveHandler(resolve, 200, (response || {}).result);
@@ -86,4 +89,4 @@ function main(params) {
   });
 }
 
-main({ state: 'Texas' });
+main({});

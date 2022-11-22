@@ -39,9 +39,9 @@ function main(params) {
         .then((response) => {
           const docs = ((response || {}).result || {}).docs || [];
           if (docs.length === 0) {
-            resolveHandler(resolve, 404, []);
+            resolveHandler(resolve, 404, { rows: [] });
           } else {
-            resolveHandler(resolve, 200, docs);
+            resolveHandler(resolve, 200, { rows: docs });
           }
         })
         .catch((error) => {
@@ -60,9 +60,9 @@ function main(params) {
         .then((response) => {
           const docs = ((response || {}).result || {}).docs || [];
           if (docs.length === 0) {
-            resolveHandler(resolve, 404, []);
+            resolveHandler(resolve, 404, { rows: [] });
           } else {
-            resolveHandler(resolve, 200, (response || {}).result);
+            resolveHandler(resolve, 200, { rows: docs });
           }
         })
         .catch((error) => {
@@ -77,9 +77,9 @@ function main(params) {
         .then((response) => {
           const docs = ((response || {}).result || {}).rows || [];
           if (docs.length === 0) {
-            resolveHandler(resolve, 404, []);
+            resolveHandler(resolve, 404, { rows: [] });
           } else {
-            resolveHandler(resolve, 200, rows);
+            resolveHandler(resolve, 200, { rows: docs });
           }
         })
         .catch((error) => {
